@@ -47,17 +47,29 @@ document.addEventListener('DOMContentLoaded', () => {
       if (char.type === 'archer') typeBadgeClass = 'type-archer';
       else if (char.type === 'mage') typeBadgeClass = 'type-mage';
 
-      card.innerHTML = `
-        <div class="char-avatar-box">
-          <img src="${char.sprite_idle}" alt="${char.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=\\'http://www.w3.org/2000/svg\\' viewBox=\\'0 0 100 100\\'><text y=\\'.9em\\' font-size=\\'80\\'>🛡️</text></svg>'">
-        </div>
-        <div class="char-name">${escapeHtml(char.name)}</div>
-        <span class="char-type-badge ${typeBadgeClass}">${char.type.toUpperCase()}</span>
-        <div class="char-trait">${escapeHtml(char.special_trait || 'Karakter Tangguh')}</div>
-      `;
+    card.innerHTML = `
+      <div class="char-avatar-box">
+        <img
+          src="${char.sprite_idle}"
+          alt="${escapeHtml(char.name)}"
+          onerror="this.src='data:image/svg+xml,...'"
+        >
+      </div>
+
+      <div class="char-name">${escapeHtml(char.name)}</div>
+      <span class="char-type-badge ${typeBadgeClass}">
+        ${char.type.toUpperCase()}
+      </span>
+      <div class="char-trait">
+        ${escapeHtml(char.special_trait || 'Karakter Tangguh')}
+      </div>
+    `;
 
       card.addEventListener('click', () => {
-        document.querySelectorAll('.character-card').forEach(c => c.classList.remove('selected'));
+        document.querySelectorAll('.character-card').forEach(c => {
+          c.classList.remove('selected');
+        });
+
         card.classList.add('selected');
         selectedCharacterId = char.id;
       });

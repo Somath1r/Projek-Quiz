@@ -33,43 +33,49 @@ option(USE_MYSQL "Aktifkan koneksi MySQL/MariaDB sungguhan" ON)
 set(MYSQL_ROOT "C:/xampp/mysql" CACHE PATH "Folder instalasi MySQL/MariaDB (XAMPP)")
 set(MYSQL_ENABLED OFF)
 
-if (USE_MYSQL)
-    find_path(MYSQL_INCLUDE_DIR NAMES mysql.h
-        PATHS "${MYSQL_ROOT}/include" "${MYSQL_ROOT}/include/mysql" "${MYSQL_ROOT}/include/mariadb"
-              /usr/include/mariadb /usr/include/mysql)
+    if (USE_MYSQL)
+        find_path(MYSQL_INCLUDE_DIR
+            NAMES mysql.h
+            PATHS
+                "${MYSQL_ROOT}/include"
+                "${MYSQL_ROOT}/include/mysql"
+                "${MYSQL_ROOT}/include/mariadb"
+                "C:/msys64/ucrt64/include/mariadb"
+            NO_DEFAULT_PATH
+        )
 
-    set(MYSQL_LIBRARY "")
-    if (WIN32)
-        # MinGW bisa langsung ditautkan ke DLL (hindari file .lib milik MSVC)
-        find_file(MYSQL_DLL NAMES libmariadb.dll libmysql.dll
-            PATHS "${MYSQL_ROOT}/lib" "${MYSQL_ROOT}/lib/mariadb" "${MYSQL_ROOT}/bin"
-            NO_DEFAULT_PATH)
-        set(MYSQL_LIBRARY "${MYSQL_DLL}")
-    endif()
-    if (NOT MYSQL_LIBRARY)
-        find_library(MYSQL_LIB NAMES mariadb mysqlclient libmariadb libmysql
-            PATHS "${MYSQL_ROOT}/lib" "${MYSQL_ROOT}/lib/mariadb")
-        set(MYSQL_LIBRARY "${MYSQL_LIB}")
-    endif()
+        find_library(MYSQL_LIBRARY
+            NAMES mariadb libmariadb
+            PATHS
+                "${MYSQL_ROOT}/lib"
+                "C:/msys64/ucrt64/lib"
+            NO_DEFAULT_PATH
+        )
 
-    if (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
-        set(MYSQL_ENABLED ON)
-        message(STATUS "MySQL client: include=${MYSQL_INCLUDE_DIR} lib=${MYSQL_LIBRARY}")
-    else()
-        message(WARNING "MySQL client TIDAK ditemukan (include='${MYSQL_INCLUDE_DIR}', lib='${MYSQL_LIBRARY}'). "
-                        "Server akan jalan dalam mode in-memory. Set -DMYSQL_ROOT=<folder xampp\\mysql>.")
+        if (MYSQL_INCLUDE_DIR AND MYSQL_LIBRARY)
+            set(MYSQL_ENABLED ON)
+            message(STATUS "MariaDB client: include=${MYSQL_INCLUDE_DIR}")
+            message(STATUS "MariaDB client: lib=${MYSQL_LIBRARY}")
+        else()
+            message(WARNING
+                "MariaDB client tidak ditemukan. "
+                "include='${MYSQL_INCLUDE_DIR}', lib='${MYSQL_LIBRARY}'"
+            )
+        endif()
     endif()
-endif()
 
 function(enable_mysql target)
     if (MYSQL_ENABLED)
         target_compile_definitions(${target} PRIVATE USE_MYSQL)
         target_include_directories(${target} PRIVATE "${MYSQL_INCLUDE_DIR}")
         target_link_libraries(${target} PRIVATE "${MYSQL_LIBRARY}")
-        if (WIN32 AND MYSQL_LIBRARY MATCHES "\\.dll$")
-            # DLL harus berada di samping .exe agar program bisa jalan
+
+        if (WIN32)
             add_custom_command(TARGET ${target} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different "${MYSQL_LIBRARY}" "$<TARGET_FILE_DIR:${target}>")
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "C:/msys64/ucrt64/bin/libmariadb.dll"
+                "$<TARGET_FILE_DIR:${target}>"
+            )
         endif()
     endif()
 endfunction()

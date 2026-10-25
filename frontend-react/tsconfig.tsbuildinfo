@@ -1,0 +1,1 @@
+{"root":["./src/background-entry.tsx","./src/components/spotlight-demo.tsx","./src/components/ui/background-beams-with-collision.tsx","./src/components/ui/background-gradient.tsx","./src/components/ui/meteors.tsx","./src/components/ui/spotlight.tsx","./src/lib/utils.ts"],"version":"5.9.3"}

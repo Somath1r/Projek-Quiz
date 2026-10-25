@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const characterId = parseInt(urlParams.get('charId'), 10) || 1;
   const playerName = urlParams.get('name') || 'Petualang';
 
+
   // State Permainan
   let character = null;
   let quizData = null;
@@ -26,6 +27,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const hpBarFill = document.getElementById('hpBarFill');
   const hpTextDisplay = document.getElementById('hpTextDisplay');
   const characterSprite = document.getElementById('characterSprite');
+  const characterSpotlight = document.getElementById('characterSpotlight');
   const battleArena = document.getElementById('battleArena');
   const enemyProjectile = document.getElementById('enemyProjectile');
   const floatingIndicator = document.getElementById('floatingIndicator');
@@ -55,6 +57,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Inisialisasi Tampilan Pemain
   hudPlayerName.textContent = playerName;
+
+  // Aktifkan Spotlight pada karakter pertarungan
+  if (characterSpotlight) {
+    characterSpotlight.style.opacity = '1';
+  }
 
   // 2. Muat Karakter dari Server
   try {
@@ -338,8 +345,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       statGameStatus.textContent = 'KALAH (KO)';
       statGameStatus.style.color = 'var(--neon-red)';
       showResultPose(character && character.sprite_hit, 'anim-ko-fall');
+
     } else if (isHurtWin) {
-      // MENANG TAPI KESAKITAN (HP <= 50)
       resultBanner.textContent = '😥 HAMPIR MOKAD EUYY....!';
       resultBanner.className = 'result-banner victory';
       resultSubtitle.textContent = `Kamu berhasil menang, tapi karaktermu kesakitan. Darah tersisa tinggal ${result.final_hp} HP. Lebih teliti lagi ya!`;
@@ -348,6 +355,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       showResultPose(character && character.sprite_hit, 'anim-hurt-victory');
       characterSprite.src = character.sprite_hit;
       characterSprite.className = 'character-sprite anim-hurt-victory';
+
     } else {
       resultBanner.textContent = '🏆 VICTORY! MISI SELESAI!';
       resultBanner.className = 'result-banner victory';

@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Arcade Quiz Game - Pilih Karakter & Kuis</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="assets/ui-background/background.css">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
 </head>
+
 <body>
+
+  <!--Animasi BG-->
+  <div id="quiz-animated-background" aria-hidden="true"></div>
 
   <!-- Navigation Bar -->
   <header class="arcade-nav">
@@ -19,6 +25,8 @@
       <button id="btnOpenLeaderboard" class="nav-btn"> LEADERBOARD</button>
       <a href="admin.html" class="nav-btn btn-admin"> KELOLA KUIS</a>
     </div>
+
+    <div id="navbar-gradient-mount" aria-hidden="true"></div>
   </header>
 
   <!-- Main Container -->
@@ -29,8 +37,8 @@
     </div>
 
     <!-- Step 1: Input Nama Pemain -->
-    <div class="arcade-card">
-      <div class="card-title"><span></span> LANGKAH 1: IDENTITAS PEMAIN</div>
+    <div class="arcade-card gradient-card">
+      <div class="card-title">LANGKAH 1: NAMA PEMAIN</div>
       <div class="form-group">
         <label for="playerNameInput" class="form-label">MASUKKAN NAMA PETUALANG:</label>
         <input type="text" id="playerNameInput" class="form-control" placeholder="Contoh: Zaky Morgan" maxlength="30" autofocus>
@@ -38,8 +46,8 @@
     </div>
 
     <!-- Step 2: Pilih Karakter -->
-    <div class="arcade-card">
-      <div class="card-title"><span></span> LANGKAH 2: PILIH KELAS KARAKTER</div>
+    <div class="arcade-card gradient-card">
+      <div class="card-title">LANGKAH 2: PILIH KELAS KARAKTER</div>
       <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 15px;">
         Tiap karakter memiliki karakteristik dan mitigasi damage yang berbeda (Penerapan Polimorfisme C++):
       </p>
@@ -52,8 +60,8 @@
     </div>
 
     <!-- Step 3: Pilih Kuis -->
-    <div class="arcade-card">
-      <div class="card-title"><span></span> LANGKAH 3: PILIH KUIS</div>
+    <div class="arcade-card gradient-card">
+      <div class="card-title">LANGKAH 3: PILIH KUIS</div>
       <div class="form-group">
         <label for="quizSelect" class="form-label">PILIH TEMA KUIS:</label>
         <select id="quizSelect" class="form-control">
@@ -65,7 +73,7 @@
 
     <!-- Action Button -->
     <button id="btnStartGame" class="btn-arcade" style="margin-top: 10px;">
-      ⚡ MULAI PERMAINAN SEKARANG ⚡
+       MULAI PERMAINAN SEKARANG 
     </button>
   </main>
 
@@ -102,5 +110,6 @@
   </div>
 
   <script src="js/app.js"></script>
+  <script type="module" src="assets/ui-background/background.js"></script>
 </body>
 </html>

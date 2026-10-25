@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Arcade Quiz Game - Pertarungan Kuis</title>
   <link rel="stylesheet" href="css/style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
 </head>
+
 <body>
 
   <!-- Navigation Bar -->
@@ -55,13 +58,15 @@
 
       <!-- Character Stage -->
       <div class="character-stage">
+        <div class="character-spotlight" aria-hidden="true"></div>
+
         <img id="characterSprite" class="character-sprite" src="assets/characters/knight_idle.svg" alt="Karakter">
       </div>
-
-      <!-- Status banner replay (Tampil saat evaluasi jawaban) -->
-      <div id="replayNotice" style="position: absolute; bottom: 12px; font-family: var(--font-arcade); font-size: 10px; color: var(--neon-cyan); background: rgba(0,0,0,0.7); padding: 4px 12px; border-radius: 4px; display: none;">
-        MODE EVALUASI JAWABAN...
-      </div>
+    <!-- Status banner replay (Tampil saat evaluasi jawaban) -->
+    <div id="replayNotice"
+      style="position: absolute; bottom: 12px; font-family: var(--font-arcade); font-size: 10px; color: var(--neon-cyan); background: rgba(0,0,0,0.7); padding: 4px 12px; border-radius: 4px; display: none;">
+      MODE EVALUASI JAWABAN...
+    </div>
     </div>
 
     <!-- Question Box -->
@@ -82,17 +87,18 @@
 
       <!-- Navigation & Action Buttons -->
       <div class="quiz-nav-row">
-        <button id="btnPrev" class="btn-secondary" style="width: 120px;" disabled>◄ SEBELUMNYA</button>
-        <button id="btnNext" class="btn-secondary" style="width: 120px;">BERIKUTNYA ►</button>
+        <button id="btnPrev" class="btn-secondary" style="width: 120px;" disabled>SEBELUMNYA</button>
+        <button id="btnNext" class="btn-secondary" style="width: 120px;">BERIKUTNYA</button>
         <button id="btnSubmitQuiz" class="btn-arcade" style="flex: 1; margin-left: 12px; display: none;">
-          ⚡ SUBMIT SEMUA JAWABAN ⚡
+           SUBMIT SEMUA JAWABAN 
         </button>
       </div>
     </div>
   </main>
 
   <!-- Replay Progress Overlay (Non-intrusive bottom bar) -->
-  <div id="replayOverlay" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(18, 24, 43, 0.95); border: 2px solid var(--neon-yellow); border-radius: 30px; padding: 10px 24px; font-family: var(--font-arcade); font-size: 11px; color: #fff; z-index: 200; box-shadow: 0 0 20px rgba(250, 204, 21, 0.5);">
+  <div id="replayOverlay"
+    style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(18, 24, 43, 0.95); border: 2px solid var(--neon-yellow); border-radius: 30px; padding: 10px 24px; font-family: var(--font-arcade); font-size: 11px; color: #fff; z-index: 200; box-shadow: 0 0 20px rgba(250, 204, 21, 0.5);">
     <span id="replayStepText">Mengevaluasi Soal 1...</span>
   </div>
 
@@ -146,13 +152,17 @@
       <div style="display: flex; gap: 12px; flex-wrap: wrap;">
         <button id="btnPlayAgain" class="btn-arcade" style="flex: 1;">🔄 MAIN LAGI</button>
         <button id="btnGameLeaderboard" class="btn-secondary" style="flex: 1;">🏆 LIHAT LEADERBOARD</button>
-        <a href="index.html" class="btn-secondary" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; padding: 10px 16px;">
+        <a href="index.html" class="btn-secondary"
+          style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; padding: 10px 16px;">
           🏠 MENU UTAMA
         </a>
       </div>
     </div>
   </div>
 
+  <script type="module" src="assets/ui-background/background.js"></script>
   <script src="js/game.js"></script>
+
 </body>
+
 </html>

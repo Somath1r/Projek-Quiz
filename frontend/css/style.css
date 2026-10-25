@@ -128,6 +128,8 @@ header.arcade-nav {
   padding: 32px 20px;
   width: 100%;
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 /* Banner Judul Retro */
@@ -959,4 +961,298 @@ select.form-control option {
   .result-stats-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* -------------------------------------------------------
+   Banner Result Hampir Kalah (HP akhir <= 50) + pose di modal hasil
+   ------------------------------------------------------- */
+.anim-hurt-victory {
+  animation: char-hurt-victory 1.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.7));
+}
+@keyframes char-hurt-victory {
+  0%, 100% { transform: translateY(0) rotate(-5deg) scale(1, 1); }
+  50% {
+    transform: translateY(5px) rotate(5deg) scale(1.03, 0.95);
+    filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.95)) saturate(0.75);
+  }
+}
+
+.result-character-pose {
+  display: block;
+  height: 120px;
+  width: auto;
+  margin: 4px auto 18px;
+}
+/* Animated React background layer: keep all existing quiz UI above it. */
+body > header.arcade-nav,
+body > main.container,
+body > #leaderboardModal {
+  position: relative;
+  z-index: 2;
+}
+body { background-color: #080b18; }
+body::before { content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(circle at 50% 0%, rgba(0,240,255,.07), transparent 55%); }
+#quiz-animated-background { z-index: 0; }
+
+.arcade-card.gradient-card {
+  position: relative;
+  isolation: isolate;
+}
+
+.arcade-card.gradient-card > .gradient-effect-mount {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.arcade-card.gradient-card > *:not(.gradient-effect-mount) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Gradient border container */
+.aceternity-gradient-border {
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+/* Animated gradient layer */
+.aceternity-gradient-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+/* Dark panel inside the gradient border */
+.aceternity-gradient-inner {
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  background: #11131b;
+}
+
+/* Keep card content above the effect */
+.arcade-card.gradient-card > *:not(.gradient-effect-mount) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Animated gradient line under navbar */
+.arcade-nav {
+  position: relative;
+}
+
+#navbar-gradient-mount {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 10;
+}
+
+#navbar-gradient-mount .aceternity-gradient-border {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+#navbar-gradient-mount .aceternity-gradient-layer {
+  position: absolute;
+  inset: 0;
+  border-radius: 0;
+}
+
+#navbar-gradient-mount .aceternity-gradient-inner {
+  display: none;
+}
+
+
+.meteor-particle {
+  position: absolute;
+  top: -40px;
+  width: 2px;
+  height: 2px;
+  border-radius: 999px;
+  background: #a5b4fc;
+  box-shadow: 0 0 6px #818cf8;
+  transform: rotate(45deg);
+  animation-name: meteor-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.meteor-particle::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 45px;
+  height: 1px;
+  transform: translateY(-50%);
+  background: linear-gradient(to left, #a5b4fc, transparent);
+}
+
+@keyframes meteor-fall {
+  from {
+    transform: translate3d(0, 0, 0) rotate(45deg);
+  }
+
+  to {
+    transform: translate3d(180px, 650px, 0) rotate(45deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meteor-particle {
+    animation: none;
+    display: none;
+  }
+}
+
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
+  }
+}
+
+.animate-spotlight {
+  animation: spotlight 2s ease 0.2s 1 forwards;
+}
+
+/* Kartu karakter sebagai area Spotlight */
+.character-grid .character-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* Mount Spotlight React */
+.character-grid .character-spotlight-mount {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.character-grid .character-spotlight-mount svg {
+  display: block;
+  opacity: 1;
+}
+
+/* Konten karakter tetap di atas cahaya */
+.character-grid .character-card > *:not(.character-spotlight-mount) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Area karakter dan Spotlight */
+.character-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Cahaya diagonal di belakang karakter */
+.character-spotlight {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+
+  width: 350%;
+  height: 220%;
+  top: -55%;
+  left: -40%;
+
+  opacity: 0;
+  overflow: hidden;
+  border-radius: 50%;
+
+  background: radial-gradient(
+    ellipse at 25% 25%,
+    rgba(196, 181, 253, 0.42) 0%,
+    rgba(139, 92, 246, 0.24) 35%,
+    rgba(139, 92, 246, 0.08) 58%,
+    transparent 75%
+  );
+
+  transform: rotate(-25deg);
+  animation: characterSpotlightFade 1s ease forwards;
+}
+
+.character-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+#character-spotlight-mount {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+#character-spotlight-mount svg {
+  width: 450% !important;
+  height: 230% !important;
+  max-width: none !important;
+  max-height: none !important;
+}
+
+.character-stage .character-sprite {
+  position: relative;
+  z-index: 1;
+}
+
+
+.character-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.character-spotlight {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+
+  width: 160%;
+  height: 220%;
+  top: -115%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  background: linear-gradient(
+    to bottom,
+    rgba(196, 181, 253, 0.08),
+    rgba(196, 181, 253, 0.22) 60%,
+    rgba(196, 181, 253, 0.03)
+  );
+
+  clip-path: polygon(47% 0, 53% 0, 100% 100%, 0 100%);
+  filter: blur(12px);
+  opacity: 0.9;
+}
+
+.character-stage .character-sprite {
+  position: relative;
+  z-index: 1;
 }
