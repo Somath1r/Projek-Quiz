@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arcade Quiz Game - Pertarungan Kuis</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚔️</text></svg>">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="arcade-nav">
+    <a href="index.html" class="nav-brand">
+      <span class="brand-icon">⚔️</span>
+      <span class="brand-title">ARCADE QUIZ GAME</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-btn">🏠 KELUAR KE MENU</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Top HUD: Player Info & Health Bar -->
+    <div class="game-hud">
+      <div class="hud-player-info">
+        <div class="hud-avatar">
+          <img id="hudAvatarImg" src="assets/characters/knight_idle.svg" alt="Avatar">
+        </div>
+        <div>
+          <div id="hudPlayerName" class="hud-meta-name">Petualang</div>
+          <div id="hudQuizTitle" class="hud-meta-quiz">Memuat Kuis...</div>
+        </div>
+      </div>
+
+      <!-- Health Bar (Darah Karakter) -->
+      <div class="hud-hp-box">
+        <div class="hp-label-row">
+          <span>HEALTH POINTS (HP)</span>
+          <span id="hpTextDisplay" class="hp-text">100 / 100 HP</span>
+        </div>
+        <div class="hp-bar-frame">
+          <div id="hpBarFill" class="hp-bar-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Battle Stage & Animation Arena -->
+    <div class="battle-arena" id="battleArena">
+      <!-- Proyektil peluru saat jawaban salah -->
+      <div id="enemyProjectile" class="projectile"></div>
+
+      <!-- Floating damage / checkmark container -->
+      <div id="floatingIndicator" class="floating-indicator"></div>
+
+      <!-- Character Stage -->
+      <div class="character-stage">
+        <img id="characterSprite" class="character-sprite" src="assets/characters/knight_idle.svg" alt="Karakter">
+      </div>
+
+      <!-- Status banner replay (Tampil saat evaluasi jawaban) -->
+      <div id="replayNotice" style="position: absolute; bottom: 12px; font-family: var(--font-arcade); font-size: 10px; color: var(--neon-cyan); background: rgba(0,0,0,0.7); padding: 4px 12px; border-radius: 4px; display: none;">
+        MODE EVALUASI JAWABAN...
+      </div>
+    </div>
+
+    <!-- Question Box -->
+    <div id="questionContainer" class="question-box">
+      <div class="question-header">
+        <div id="questionIndexBadge" class="question-number">SOAL 1 DARI 5</div>
+        <div id="progressPill" class="progress-pill">Progres: 0/5 Dijawab</div>
+      </div>
+
+      <div id="questionText" class="question-text">
+        Memuat soal dari backend C++...
+      </div>
+
+      <!-- Option Buttons Container -->
+      <div id="optionsList" class="options-list">
+        <!-- Pilihan A, B, C, D dirender via JS -->
+      </div>
+
+      <!-- Navigation & Action Buttons -->
+      <div class="quiz-nav-row">
+        <button id="btnPrev" class="btn-secondary" style="width: 120px;" disabled>◄ SEBELUMNYA</button>
+        <button id="btnNext" class="btn-secondary" style="width: 120px;">BERIKUTNYA ►</button>
+        <button id="btnSubmitQuiz" class="btn-arcade" style="flex: 1; margin-left: 12px; display: none;">
+          ⚡ SUBMIT SEMUA JAWABAN ⚡
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Replay Progress Overlay (Non-intrusive bottom bar) -->
+  <div id="replayOverlay" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(18, 24, 43, 0.95); border: 2px solid var(--neon-yellow); border-radius: 30px; padding: 10px 24px; font-family: var(--font-arcade); font-size: 11px; color: #fff; z-index: 200; box-shadow: 0 0 20px rgba(250, 204, 21, 0.5);">
+    <span id="replayStepText">Mengevaluasi Soal 1...</span>
+  </div>
+
+  <!-- Final Results & Review Modal -->
+  <div id="resultModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div id="resultBanner" class="result-banner victory">VICTORY! SELAMAT!</div>
+        <p id="resultSubtitle" style="color: var(--text-muted); font-size: 16px;">
+          Kamu berhasil menyelesaikan tantangan kuis!
+        </p>
+      </div>
+
+      <!-- Stats Cards -->
+      <div class="result-stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">SKOR AKHIR</div>
+          <div id="statFinalScore" class="stat-val" style="color: var(--neon-yellow);">100</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">SISA DARAH (HP)</div>
+          <div id="statFinalHp" class="stat-val" style="color: var(--neon-green);">100 HP</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">STATUS AKHIR</div>
+          <div id="statGameStatus" class="stat-val">BERHASIL</div>
+        </div>
+      </div>
+
+      <!-- Section: Review Soal yang Salah -->
+      <div style="margin-bottom: 24px;">
+        <h3 class="card-title" style="font-size: 12px; color: var(--neon-red); margin-bottom: 12px;">
+          <span>❌</span> PEMBAHASAN JAWABAN SALAH
+        </h3>
+        <div id="wrongQuestionsList">
+          <!-- Item salah dirender via JS -->
+        </div>
+      </div>
+
+      <!-- Section: Ringkasan Soal yang Benar -->
+      <div style="margin-bottom: 24px;">
+        <h3 class="card-title" style="font-size: 12px; color: var(--neon-green); margin-bottom: 12px;">
+          <span>✓</span> RINGKASAN JAWABAN BENAR
+        </h3>
+        <div id="correctQuestionsList">
+          <!-- Item benar dirender via JS -->
+        </div>
+      </div>
+
+      <!-- Modal Action Buttons -->
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+        <button id="btnPlayAgain" class="btn-arcade" style="flex: 1;">🔄 MAIN LAGI</button>
+        <button id="btnGameLeaderboard" class="btn-secondary" style="flex: 1;">🏆 LIHAT LEADERBOARD</button>
+        <a href="index.html" class="btn-secondary" style="text-decoration: none; text-align: center; display: flex; align-items: center; justify-content: center; padding: 10px 16px;">
+          🏠 MENU UTAMA
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/game.js"></script>
+</body>
+</html>

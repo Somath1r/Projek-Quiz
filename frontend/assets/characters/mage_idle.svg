@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <!-- Mage Idle Sprite (Mystic Purple Robes & Glowing Staff) -->
+  <defs>
+    <radialGradient id="mageGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orbGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#818cf8" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#c084fc" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <ellipse cx="100" cy="180" rx="42" ry="10" fill="#0f172a" opacity="0.6"/>
+  <circle cx="100" cy="95" r="75" fill="url(#mageGlow)"/>
+
+  <!-- Mystic Robe -->
+  <path d="M72,80 L50,175 L150,175 L128,80 Z" fill="#581c87"/>
+  <path d="M84,80 L80,175 L120,175 L116,80 Z" fill="#7e22ce"/>
+  <!-- Gold Robe Trim -->
+  <path d="M50,175 L150,175" stroke="#facc15" stroke-width="6"/>
+
+  <!-- Mystic Crystal Staff (Right Hand) -->
+  <rect x="142" y="45" width="6" height="135" rx="3" fill="#78350f"/>
+  <path d="M136,45 Q145,25 154,45 Z" fill="#ca8a04"/>
+  <!-- Glowing Floating Crystal Orb -->
+  <circle cx="145" cy="32" r="14" fill="url(#orbGlow)"/>
+  <circle cx="145" cy="32" r="7" fill="#f0f9ff"/>
+
+  <!-- Head & Long White Beard -->
+  <circle cx="100" cy="58" r="20" fill="#fed7aa"/>
+  <!-- Eyes -->
+  <circle cx="94" cy="56" r="2.5" fill="#1e1b4b"/>
+  <circle cx="106" cy="56" r="2.5" fill="#1e1b4b"/>
+  <!-- Beard -->
+  <path d="M86,64 Q100,105 114,64 Q100,74 86,64 Z" fill="#f8fafc"/>
+
+  <!-- Wizard Hat with Gold Star -->
+  <ellipse cx="100" cy="48" rx="38" ry="10" fill="#3b0764"/>
+  <path d="M75,46 L100,6 L125,46 Z" fill="#6b21a8"/>
+  <path d="M75,44 L125,44" stroke="#facc15" stroke-width="4"/>
+  <!-- Star on Hat -->
+  <path d="M100,20 L102,25 L107,26 L103,29 L104,34 L100,31 L96,34 L97,29 L93,26 L98,25 Z" fill="#facc15"/>
+</svg>

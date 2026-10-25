@@ -1,0 +1,15 @@
+{
+  "database": {
+    "host": "127.0.0.1",
+    "port": 3307,
+    "user": "root",
+    "password": "",
+    "database": "quiz_game"
+  },
+  "game": {
+    "default_hp": 100,
+    "base_damage_wrong": 20,
+    "server_port": 8080,
+    "frontend_dir": "./frontend"
+  }
+}

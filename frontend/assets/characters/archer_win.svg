@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <!-- Archer Win / Victory Sprite -->
+  <defs>
+    <radialGradient id="winGlowA" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#4ade80" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <circle cx="100" cy="90" r="85" fill="url(#winGlowA)"/>
+
+  <!-- Victory Sparkles -->
+  <path d="M35,35 L40,45 L50,50 L40,55 L35,65 L30,55 L20,50 L30,45 Z" fill="#facc15"/>
+  <path d="M165,40 L168,48 L176,51 L168,54 L165,62 L162,54 L154,51 L162,48 Z" fill="#facc15"/>
+
+  <!-- Quiver -->
+  <rect x="115" y="70" width="14" height="45" rx="3" fill="#854d0e" transform="rotate(20, 120, 90)"/>
+
+  <!-- Tunic -->
+  <path d="M72,82 L55,145 L145,145 L128,82 Z" fill="#15803d"/>
+  <rect x="76" y="80" width="48" height="55" rx="6" fill="#16a34a"/>
+  <rect x="74" y="118" width="52" height="10" fill="#78350f"/>
+  <rect x="94" y="116" width="12" height="14" rx="2" fill="#eab308"/>
+
+  <!-- Legs -->
+  <rect x="78" y="142" width="16" height="30" fill="#713f12"/>
+  <rect x="106" y="142" width="16" height="30" fill="#713f12"/>
+
+  <!-- Bow Held Triumphant Above Head -->
+  <path d="M80,30 Q100,8 120,30" stroke="#78350f" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M82,30 L118,30" stroke="#fef08a" stroke-width="2"/>
+  <rect x="96" y="28" width="8" height="6" fill="#eab308"/>
+
+  <!-- Head with Winking Happy Expression -->
+  <circle cx="100" cy="56" r="22" fill="#fbcfe8"/>
+  <path d="M90,56 Q95,50 100,56" stroke="#0f172a" stroke-width="2.5" fill="none"/>
+  <circle cx="107" cy="55" r="3" fill="#0f172a"/>
+  <!-- Big Smile -->
+  <path d="M94,62 Q100,72 106,62 Z" fill="#dc2626"/>
+
+  <!-- Cap with Bright Feather -->
+  <path d="M76,46 Q100,24 124,46 L126,50 L74,50 Z" fill="#166534"/>
+  <path d="M110,38 Q135,10 145,20 Q135,32 118,40 Z" fill="#fbbf24"/>
+</svg>

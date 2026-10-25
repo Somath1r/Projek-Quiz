@@ -1,0 +1,4 @@
+D:/TUGAS Kuliah/Semester 3/Praktikum Pemograman Oreantasi Objek/Projek Quiz/build/CMakeFiles/quiz_server.dir
+D:/TUGAS Kuliah/Semester 3/Praktikum Pemograman Oreantasi Objek/Projek Quiz/build/CMakeFiles/test_suite.dir
+D:/TUGAS Kuliah/Semester 3/Praktikum Pemograman Oreantasi Objek/Projek Quiz/build/CMakeFiles/edit_cache.dir
+D:/TUGAS Kuliah/Semester 3/Praktikum Pemograman Oreantasi Objek/Projek Quiz/build/CMakeFiles/rebuild_cache.dir

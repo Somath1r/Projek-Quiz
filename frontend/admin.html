@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Kelola Kuis & Pertanyaan</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>">
+  <style>
+    .admin-badge {
+      font-family: var(--font-arcade);
+      font-size: 10px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: rgba(255, 0, 127, 0.2);
+      border: 1px solid var(--neon-pink);
+      color: #ff99cc;
+    }
+    .action-btn-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 9px;
+    }
+    .option-builder-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      background: #0f172a;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #334155;
+    }
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--neon-green);
+      cursor: pointer;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header class="arcade-nav">
+    <a href="index.html" class="nav-brand">
+      <span class="brand-icon">⚙️</span>
+      <span class="brand-title">ADMIN PANEL - KELOLA KUIS</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-btn">🎮 KEMBALI KE GAME</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Header Admin -->
+    <div class="hero-banner" style="margin-bottom: 24px;">
+      <h1>MANAJEMEN KUIS & PERTANYAAN</h1>
+      <p>Kelola data kuis, pertanyaan, serta pilihan jawaban. Perubahan tersimpan langsung ke basis data.</p>
+    </div>
+
+    <!-- Section 1: Daftar Kuis (CRUD Quiz) -->
+    <div class="arcade-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div class="card-title" style="margin-bottom: 0;"><span>📜</span> DAFTAR KUIS TERSEDIA</div>
+        <button id="btnOpenCreateQuizModal" class="btn-arcade" style="width: auto; padding: 10px 18px; font-size: 11px;">
+          + TAMBAH KUIS BARU
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="arcade-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>JUDUL KUIS</th>
+              <th>DESKRIPSI</th>
+              <th>TANGGAL</th>
+              <th>AKSI</th>
+            </tr>
+          </thead>
+          <tbody id="quizTableBody">
+            <tr>
+              <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 20px;">Memuat daftar kuis...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Section 2: Kelola Pertanyaan untuk Kuis Terpilih -->
+    <div id="questionsSection" class="arcade-card" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <span class="admin-badge">KUIS AKTIF</span>
+          <h2 id="activeQuizTitle" style="color: #fff; margin-top: 6px; font-size: 20px;">Judul Kuis</h2>
+        </div>
+        <button id="btnOpenCreateQuestionModal" class="btn-arcade" style="width: auto; padding: 10px 18px; font-size: 11px;">
+          + TAMBAH PERTANYAAN
+        </button>
+      </div>
+
+      <div id="questionsContainer">
+        <!-- Daftar pertanyaan dan opsi dirender via JS -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Tambah / Edit Kuis -->
+  <div id="quizModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 500px;">
+      <h3 id="quizModalTitle" class="card-title" style="color: var(--neon-cyan);">TAMBAH KUIS BARU</h3>
+      <input type="hidden" id="quizIdInput" value="">
+      <div class="form-group">
+        <label for="quizTitleInput" class="form-label">JUDUL KUIS:</label>
+        <input type="text" id="quizTitleInput" class="form-control" placeholder="Contoh: Pemrograman OOP C++" required>
+      </div>
+      <div class="form-group">
+        <label for="quizDescInput" class="form-label">DESKRIPSI KUIS:</label>
+        <textarea id="quizDescInput" class="form-control" rows="3" placeholder="Deskripsi singkat materi kuis..."></textarea>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button id="btnSaveQuiz" class="btn-arcade" style="flex: 1;">SIMPAN KUIS</button>
+        <button id="btnCancelQuizModal" class="btn-secondary" style="width: 100px;">BATAL</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Tambah / Edit Pertanyaan & Opsi -->
+  <div id="questionModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 650px;">
+      <h3 id="questionModalTitle" class="card-title" style="color: var(--neon-yellow);">TAMBAH PERTANYAAN BARU</h3>
+      <input type="hidden" id="modalQuestionId" value="">
+
+      <div class="form-group">
+        <label for="questionTextInput" class="form-label">TEKS PERTANYAAN:</label>
+        <textarea id="questionTextInput" class="form-control" rows="2" placeholder="Tuliskan butir soal di sini..." required></textarea>
+      </div>
+
+      <!-- Option Builder (Min 2, Max 5, Tepat 1 Benar) -->
+      <div class="form-group">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <label class="form-label" style="margin-bottom: 0;">PILIHAN JAWABAN (MINIMAL 2, MAKSIMAL 5):</label>
+          <button type="button" id="btnAddOptionRow" class="btn-secondary btn-sm" style="background: #0284c7;">+ TAMBAH OPSI</button>
+        </div>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
+          * Tandai radio "Kunci Benar" tepat pada 1 pilihan jawaban yang benar.
+        </p>
+
+        <div id="optionRowsContainer">
+          <!-- Input pilihan jawaban dibangun via JS -->
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button id="btnSaveQuestion" class="btn-arcade" style="flex: 1;">SIMPAN PERTANYAAN</button>
+        <button id="btnCancelQuestionModal" class="btn-secondary" style="width: 100px;">BATAL</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
