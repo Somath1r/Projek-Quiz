@@ -1,0 +1,16 @@
+# Hasil kompilasi C++
+build/
+*.exe
+*.o
+*.obj
+*.dll
+
+# Cache dan file sementara
+.vscode/
+*.log
+.DS_Store
+Thumbs.db
+
+# File rahasia
+.env
+.env.local
