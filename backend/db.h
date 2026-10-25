@@ -66,16 +66,14 @@ private:
     Database(const Database&) = delete;
     Database& operator=(const Database&) = delete;
 
-    bool connectTcp(const DatabaseConfig& config);
+    // Mencoba login ke MySQL & cek tabel. Jika gagal, alasan diisi ke "reason".
+    bool connectMysql(const DatabaseConfig& config, std::string& reason);
     void setupFallbackSeed();
 
     bool isConnected_ = false;
     bool isFallbackMode_ = false;
     DatabaseConfig config_;
     std::mutex dbMutex_;
-
-    // Handle internal TCP socket untuk MySQL jika terhubung
-    int socketFd_ = -1;
 };
 
 } // namespace QuizGame

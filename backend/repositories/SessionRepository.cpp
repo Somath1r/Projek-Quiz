@@ -107,7 +107,9 @@ bool SessionRepository::saveSessionAnswer(int sessionId, int questionId, int opt
     );
     stmt->bindInt(1, sessionId);
     stmt->bindInt(2, questionId);
-    stmt->bindInt(3, optionId);
+    // Soal yang tidak dijawab disimpan sebagai NULL (kolom option_id punya Foreign Key)
+    if (optionId > 0) stmt->bindInt(3, optionId);
+    else stmt->bindNull(3);
     stmt->bindBool(4, isCorrect);
     return stmt->execute();
 }

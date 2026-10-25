@@ -130,7 +130,9 @@ GameResult GameEngine::submitAnswers(
         result.sessionId = session.getId();
         // Simpan detail tiap jawaban ke tabel session_answers
         for (const auto& d : result.details) {
-            sessionRepo_.saveSessionAnswer(result.sessionId, d.questionId, d.selectedOptionId, d.isCorrect);
+            // Jika pemain tidak menjawab (atau mengirim opsi yang tidak valid), simpan NULL
+            int optionToSave = d.selectedOptionText.empty() ? 0 : d.selectedOptionId;
+            sessionRepo_.saveSessionAnswer(result.sessionId, d.questionId, optionToSave, d.isCorrect);
         }
     }
 
