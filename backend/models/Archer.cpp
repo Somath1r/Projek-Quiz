@@ -5,17 +5,10 @@ Archer::Archer(int id, const std::string& name,
                int hp)
     : Character(id, name, "archer", spriteIdle, spriteHit, spriteWin, hp) {}
 
-// POLIMORFISME: Archer menerima damage penuh standar (20 HP)
-int Archer::takeDamage(int baseDamage) {
-    int actualDamage = std::max(5, baseDamage);
-    hp_ = std::max(0, hp_ - actualDamage);
-    return actualDamage;
-}
-
 std::string Archer::getHitAnimation() const {
     return "archer-dodge-recoil";
 }
 
 std::string Archer::getSpecialTrait() const {
-    return "Kelincahan Alami: Menerima damage standar saat salah menjawab.";
+    return "Kelincahan Alami: Terpental ke belakang saat terkena serangan, lalu cepat bangkit.";
 }

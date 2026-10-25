@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 
     std::cout << "[Config] Database Target: " << dbConfig.host << ":" << dbConfig.port 
               << " (DB: " << dbConfig.database << ", User: " << dbConfig.user << ")" << std::endl;
-    std::cout << "[Config] Base Damage Salah: " << gameConfig.baseDamageWrongAnswer << " HP" << std::endl;
+    std::cout << "[Config] Damage per soal salah: " << gameConfig.defaultHp << " / jumlah soal (otomatis)" << std::endl;
     std::cout << "[Config] Frontend Folder: " << gameConfig.frontendDir << std::endl;
 
     // 2. Inisialisasi Koneksi Database

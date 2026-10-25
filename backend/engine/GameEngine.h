@@ -50,6 +50,7 @@ public:
     int score = 0;
     int maxScore = 100;
     int initialHp = 100;
+    int damagePerWrong = 0; // damage tiap jawaban salah (= HP awal / jumlah soal)
     int finalHp = 100;
     bool isGameOver = false;
     std::vector<QuestionEvaluation> details;

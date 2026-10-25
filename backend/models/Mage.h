@@ -15,9 +15,6 @@ public:
          const std::string& spriteIdle, const std::string& spriteHit, const std::string& spriteWin,
          int hp = 100);
 
-    // POLIMORFISME: Meng-override takeDamage. Mage rapuh secara fisik,
-    // sehingga menerima bonus damage 5 poin (misal base 20 -> terkena 25 HP).
-    int takeDamage(int baseDamage) override;
 
     // POLIMORFISME: Meng-override animasi saat terkena pukulan
     std::string getHitAnimation() const override;

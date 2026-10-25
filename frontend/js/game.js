@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         item.innerHTML = `
           <div class="review-q-title">${idx + 1}. ${escapeHtml(c.question_text)}</div>
           <div class="review-answer-row">
-            <div>Jawaban Benar: <span class="ans-badge correct">${escapeHtml(c.correct_option_text)}</span></div>
+            <div>Jawaban Yang Benar: <span class="ans-badge correct">${escapeHtml(c.correct_option_text)}</span></div>
           </div>
         `;
         correctQuestionsList.appendChild(item);

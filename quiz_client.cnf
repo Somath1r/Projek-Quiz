@@ -1,0 +1,4 @@
+[quizgame]
+ssl-mode=DISABLED
+skip-ssl
+ssl-verify-server-cert=0

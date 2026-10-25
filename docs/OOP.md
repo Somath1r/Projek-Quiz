@@ -12,7 +12,7 @@ Dokumen ini disusun sebagai panduan komprehensif dan bahan presentasi tugas kuli
 | **Class & Object** | Pemisahan deklarasi `.h` dan implementasi `.cpp` untuk setiap model, repositori, engine, dan database handler. | `backend/models/`, `backend/repositories/`, `backend/engine/` |
 | **Enkapsulasi** | Seluruh atribut bersifat `private`/`protected`. Darah karakter (`hp_`) hanya dapat diubah melalui `takeDamage()` dan `heal()`. Kunci jawaban (`is_correct`) disembunyikan saat dikirim ke pemain melalui `Option::toJson(false)`. | `models/Character.h`, `models/Character.cpp`, `models/Option.h` |
 | **Pewarisan (Inheritance)** | `Entity` diturunkan ke `Quiz`, `Question`, dan `Option`. `Character` diturunkan ke `Knight`, `Archer`, dan `Mage`. | `models/Entity.h`, `models/Knight.h`, `models/Archer.h`, `models/Mage.h` |
-| **Polimorfisme** | Method virtual `takeDamage(int baseDamage)` dan `getHitAnimation()` di-override oleh tiap subclass dengan perilaku berbeda. Penggunaan `std::unique_ptr<Character>` dan `CharacterFactory`. | `models/Character.h`, `models/Knight.cpp`, `models/Archer.cpp`, `models/Mage.cpp`, `models/CharacterFactory.cpp` |
+| **Polimorfisme** | Method virtual murni `getHitAnimation()` dan `getSpecialTrait()` di-override oleh tiap subclass dengan perilaku berbeda (`takeDamage()` juga virtual). Penggunaan `std::unique_ptr<Character>` dan `CharacterFactory`. | `models/Character.h`, `models/Knight.cpp`, `models/Archer.cpp`, `models/Mage.cpp`, `models/CharacterFactory.cpp` |
 | **Abstraksi** | `GameEngine` menyembunyikan seluruh kerumitan kalkulasi penilaian, mitigasi damage, dan penyimpanan database dari Handler API. | `engine/GameEngine.h`, `engine/GameEngine.cpp` |
 | **Interface** | Abstract class dengan pure virtual function (`= 0`) dan virtual destructor: `ISerializable` dan generic template `IRepository<T>`. | `interfaces/ISerializable.h`, `interfaces/IRepository.h` |
 
@@ -170,19 +170,13 @@ classDiagram
    Class `Character` mendefinisikan atribut dasar seperti `name_`, `type_`, `hp_`, dan sprite animasi. Subclass `Knight`, `Archer`, dan `Mage` mewarisi atribut dan fungsi dasar ini.
 
 ### D. Polimorfisme (Polymorphism)
-Method `virtual int takeDamage(int baseDamage)` dan `virtual std::string getHitAnimation() const` dideklarasikan pada base class `Character` dan di-override secara spesifik:
-- **Knight (Ksatria Baja)**:
-  - Memiliki pertahanan armor tebal.
-  - Mengurangi damage sebesar 5 poin (`baseDamage - 5`). Jika base damage salah = 20, Knight hanya kehilangan 15 HP.
-  - Animasi terkena pukulan: `"knight-shield-block"`.
-- **Archer (Pemanah Elit)**:
-  - Memiliki kelincahan standar.
-  - Menerima damage standar (`baseDamage = 20 HP`).
-  - Animasi: `"archer-dodge-recoil"`.
-- **Mage (Penyihir Elemen)**:
-  - Merupakan tipe *glass cannon* dengan fisik rapuh.
-  - Menerima tambahan damage sebesar 5 poin (`baseDamage + 5 = 25 HP`).
-  - Animasi: `"mage-barrier-shatter"`.
+Besar damage ditentukan `GameEngine`: **100 ÷ jumlah soal** (dibulatkan ke atas) untuk setiap jawaban salah, sama untuk semua karakter. Contoh: kuis 1 soal = 100 damage (langsung kalah), 5 soal = 20 damage.
+Perbedaan perilaku tiap karakter diwujudkan lewat method virtual murni `getHitAnimation()` dan `getSpecialTrait()` pada base class `Character`, yang di-override secara spesifik:
+- **Knight (Ksatria Baja)**: animasi terkena serangan `"knight-shield-block"` (menahan dengan perisai).
+- **Archer (Pemanah Elit)**: animasi `"archer-dodge-recoil"` (terpental ke belakang).
+- **Mage (Penyihir Elemen)**: animasi `"mage-barrier-shatter"` (penghalang sihir pecah).
+
+`takeDamage(int damage)` di `Character` bersifat `virtual` dengan implementasi umum (HP tidak pernah di bawah 0), sehingga subclass tetap dapat meng-override-nya jika di masa depan ingin aturan damage khusus.
 
 **Factory Pattern**:
 Subclass dibuat melalui `CharacterFactory::create(type, ...)` yang mengembalikan smart pointer polimorfik `std::unique_ptr<Character>`. Pemanggil (seperti `GameEngine` atau `CharacterRepository`) tidak perlu mengetahui class turunan konkret mana yang sedang aktif.
@@ -210,7 +204,7 @@ API Handler tidak perlu tahu bagaimana query database dijalankan, bagaimana kunc
 ## 4. Panduan Menjawab Pertanyaan Dosen Saat Ujian / Presentasi
 
 - **T: "Di mana letak polimorfisme di kode Anda?"**
-  - **J**: "Di class `Character` pada method `takeDamage(int baseDamage)` dan `getHitAnimation()`. Saat `GameEngine::submitAnswers` dipanggil, engine memegang pointer `std::unique_ptr<Character>`. Ketika jawaban pemain salah, engine memanggil `character->takeDamage(baseDamage)`. Secara polimorfik, jika karakternya Knight maka damage terpotong jadi 15 HP, jika Archer 20 HP, dan jika Mage 25 HP, sesuai override pada masing-masing subclass."
+  - **J**: "Di class `Character` pada method `getHitAnimation()` dan `getSpecialTrait()`. Saat `GameEngine::submitAnswers` dipanggil, engine memegang pointer `std::unique_ptr<Character>`. Ketika jawaban pemain salah, engine memanggil `character->takeDamage(damagePerWrong)` lalu mengirim `character->getHitAnimation()` ke frontend. Secara polimorfik, Knight menghasilkan animasi blok perisai, Archer terpental, dan Mage penghalang sihir pecah, padahal pemanggilnya sama persis."
 - **T: "Bagaimana Anda mencegah pemain curang melihat kunci jawaban lewat inspect element?"**
   - **J**: "Dengan prinsip Enkapsulasi di C++. Pada endpoint `GET /api/play/:quizId`, method `Option::toJson(false)` dipanggil dengan parameter `includeAnswer = false`, sehingga atribut `is_correct` sama sekali tidak dimasukkan ke dalam response JSON. Evaluasi baru dilakukan di server C++ oleh `GameEngine` saat pemain melakukan submit."
 - **T: "Mengapa menggunakan abstract class Entity dan interface ISerializable?"**

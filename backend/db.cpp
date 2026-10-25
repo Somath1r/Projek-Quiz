@@ -4,6 +4,8 @@
 #include <algorithm>
 #include <chrono>
 #include <cstring>
+#include <cstdlib>
+#include <fstream>
 #include <type_traits>
 
 // Header client MySQL/MariaDB hanya dipakai jika CMake menemukannya (USE_MYSQL)
@@ -474,6 +476,38 @@ private:
 // Implementasi PreparedStatement ASLI memakai MySQL C API (mysql_stmt_*)
 // Parameter dikirim terpisah dari teks SQL, jadi aman dari SQL Injection.
 // -------------------------------------------------------------
+// MariaDB Connector/C versi 3.4+ mewajibkan TLS secara bawaan, sedangkan MySQL XAMPP
+// (lokal) tidak mengaktifkan TLS -> error "SSL is required, but the server does not
+// support it". Untuk koneksi ke localhost kita matikan TLS dengan 3 cara sekaligus
+// (versi Connector berbeda butuh cara berbeda).
+static void disableTlsForLocalConnection(MYSQL* conn) {
+    static bool prepared = false;
+    if (!prepared) {
+        prepared = true;
+        // 1) Variabel lingkungan: matikan verifikasi sertifikat server
+#ifdef _WIN32
+        _putenv_s("MARIADB_TLS_DISABLE_PEER_VERIFICATION", "1");
+#else
+        setenv("MARIADB_TLS_DISABLE_PEER_VERIFICATION", "1", 1);
+#endif
+        // 2) Option file kecil yang berisi ssl-mode=DISABLED (dibuat otomatis)
+        std::ofstream cnf("quiz_client.cnf", std::ios::trunc);
+        if (cnf.is_open()) {
+            cnf << "[quizgame]\n"
+                << "ssl-mode=DISABLED\n"
+                << "skip-ssl\n"
+                << "ssl-verify-server-cert=0\n";
+        }
+    }
+    mysql_options(conn, MYSQL_READ_DEFAULT_FILE, "quiz_client.cnf");
+    mysql_options(conn, MYSQL_READ_DEFAULT_GROUP, "quizgame");
+
+    // 3) Opsi lewat API
+    char off = 0;
+    mysql_options(conn, MYSQL_OPT_SSL_ENFORCE, &off);
+    mysql_options(conn, MYSQL_OPT_SSL_VERIFY_SERVER_CERT, &off);
+}
+
 static MYSQL* openConnection(const DatabaseConfig& cfg, std::string& error) {
     MYSQL* conn = mysql_init(nullptr);
     if (!conn) { error = "mysql_init gagal"; return nullptr; }
@@ -481,6 +515,7 @@ static MYSQL* openConnection(const DatabaseConfig& cfg, std::string& error) {
     unsigned int timeoutSec = 3;
     mysql_options(conn, MYSQL_OPT_CONNECT_TIMEOUT, &timeoutSec);
     mysql_options(conn, MYSQL_SET_CHARSET_NAME, "utf8mb4");
+    disableTlsForLocalConnection(conn);
 
     if (!mysql_real_connect(conn, cfg.host.c_str(), cfg.user.c_str(), cfg.password.c_str(),
                             cfg.database.c_str(), static_cast<unsigned int>(cfg.port), nullptr, 0)) {

@@ -51,9 +51,14 @@ public:
     // ENKAPSULASI: Memodifikasi HP secara terkontrol (rentang 0 - 100)
     void heal(int amount);
 
+    // ENKAPSULASI: satu-satunya cara mengurangi HP. Damage sama untuk semua karakter
+    // (besarnya ditentukan GameEngine = 100 / jumlah soal). Mengembalikan HP yang
+    // benar-benar hilang (tidak pernah melebihi sisa HP). Method ini virtual sehingga
+    // subclass tetap bisa meng-override jika ingin aturan damage khusus.
+    virtual int takeDamage(int damage);
+
     // POLIMORFISME: Method virtual murni (pure virtual) yang WAJIB di-override
     // oleh masing-masing subclass (Knight, Archer, Mage) dengan perilaku unik.
-    virtual int takeDamage(int baseDamage) = 0;
     virtual std::string getHitAnimation() const = 0;
     virtual std::string getSpecialTrait() const = 0;
 

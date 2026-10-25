@@ -12,6 +12,7 @@ nlohmann::json GameResult::toJson() const {
     j["score"] = score;
     j["max_score"] = maxScore;
     j["initial_hp"] = initialHp;
+    j["damage_per_wrong"] = damagePerWrong;
     j["final_hp"] = finalHp;
     j["is_game_over"] = isGameOver;
 
@@ -67,8 +68,11 @@ GameResult GameEngine::submitAnswers(
         totalQuestions = 1; // Cegah pembagian dengan nol
     }
 
-    // Ambil base damage dari konfigurasi terpusat
-    int baseDamage = QuizGame::ConfigManager::getInstance().getGameConfig().baseDamageWrongAnswer;
+    // ATURAN DAMAGE: tiap jawaban salah = HP awal / jumlah soal (dibulatkan ke atas).
+    // Contoh: 1 soal -> 100 (langsung kalah), 4 soal -> 25, 5 soal -> 20, 3 soal -> 34.
+    // Dibulatkan ke atas agar jika SEMUA soal salah, HP pasti habis.
+    int damagePerWrong = (result.initialHp + totalQuestions - 1) / totalQuestions;
+    result.damagePerWrong = damagePerWrong;
 
     int correctCount = 0;
 
@@ -109,9 +113,9 @@ GameResult GameEngine::submitAnswers(
             correctCount++;
         } else {
             eval.isCorrect = false;
-            // POLIMORFISME: Panggil method virtual takeDamage() & getHitAnimation()
-            // Knight mengurangi damage jadi 15, Archer 20, Mage 25
-            eval.damageTaken = character->takeDamage(baseDamage);
+            // ENKAPSULASI: HP hanya berubah lewat takeDamage().
+            // POLIMORFISME: getHitAnimation() menghasilkan animasi berbeda per karakter.
+            eval.damageTaken = character->takeDamage(damagePerWrong);
             eval.hpAfter = character->getHp();
             eval.hitAnimation = character->getHitAnimation();
         }

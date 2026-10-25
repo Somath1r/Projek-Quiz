@@ -28,8 +28,8 @@ void testOOPPolymorphismAndCharacterFactory() {
     assert(knight != nullptr);
     assert(knight->getType() == "knight");
     int dmgKnight = knight->takeDamage(20);
-    assert(dmgKnight == 15); // Mitigasi 5 poin
-    assert(knight->getHp() == 85);
+    assert(dmgKnight == 20); // Damage sama untuk semua karakter
+    assert(knight->getHp() == 80);
     assert(knight->getHitAnimation() == "knight-shield-block");
 
     // Archer
@@ -37,7 +37,7 @@ void testOOPPolymorphismAndCharacterFactory() {
     assert(archer != nullptr);
     assert(archer->getType() == "archer");
     int dmgArcher = archer->takeDamage(20);
-    assert(dmgArcher == 20); // Damage standar
+    assert(dmgArcher == 20);
     assert(archer->getHp() == 80);
     assert(archer->getHitAnimation() == "archer-dodge-recoil");
 
@@ -46,11 +46,11 @@ void testOOPPolymorphismAndCharacterFactory() {
     assert(mage != nullptr);
     assert(mage->getType() == "mage");
     int dmgMage = mage->takeDamage(20);
-    assert(dmgMage == 25); // Fragile extra 5 damage
-    assert(mage->getHp() == 75);
+    assert(dmgMage == 20);
+    assert(mage->getHp() == 80);
     assert(mage->getHitAnimation() == "mage-barrier-shatter");
 
-    std::cout << " -> PASSED: Polimorfisme Knight (15 dmg), Archer (20 dmg), Mage (25 dmg) valid!" << std::endl;
+    std::cout << " -> PASSED: damage sama, animasi hit berbeda per karakter (polimorfisme) valid!" << std::endl;
 }
 
 void testOOPEncapsulationOptionSecurity() {
@@ -105,10 +105,10 @@ void testGameEngineEvaluation() {
 
     // Jawaban simulasi:
     // Soal 1: ID 1 (Enkapsulasi) -> BENAR
-    // Soal 2: ID 6 (override)    -> SALAH (Knight kena 15 damage)
+    // Soal 2: ID 6 (override)    -> SALAH (5 soal -> 20 damage)
     // Soal 3: ID 9 (IS-A)        -> BENAR
     // Soal 4: ID 13 (Abstract)   -> BENAR
-    // Soal 5: ID 18 (Serial)     -> SALAH (Knight kena 15 damage)
+    // Soal 5: ID 18 (Serial)     -> SALAH (5 soal -> 20 damage)
     std::vector<UserAnswerInput> answers = {
         {1, 1},
         {2, 6},
@@ -127,7 +127,7 @@ void testGameEngineEvaluation() {
     std::cout << "    * Status Game Over: " << (result.isGameOver ? "Ya" : "Tidak") << std::endl;
 
     assert(result.score == 60); // 3 dari 5 benar = 60
-    assert(result.finalHp == 70); // 100 - 15 - 15 = 70 HP (Polimorfisme Knight)
+    assert(result.finalHp == 60); // 100 - 20 - 20 = 60 HP
     assert(!result.isGameOver);
     assert(result.details.size() == 5);
     assert(result.details[1].hitAnimation == "knight-shield-block");
@@ -143,6 +143,51 @@ void testGameEngineEvaluation() {
     std::cout << " -> PASSED: GameEngine & Penilaian Server Terverifikasi 100%!" << std::endl;
 }
 
+// Aturan baru: damage per soal salah = 100 / jumlah soal
+void testDamageDependsOnQuestionCount() {
+    std::cout << "[TEST] 5. Pengujian damage = 100 / jumlah soal..." << std::endl;
+
+    QuizRepository quizRepo;
+    QuestionRepository qRepo;
+    OptionRepository oRepo;
+    GameEngine engine;
+
+    // Kuis dengan 1 soal: 1 jawaban salah => damage 100 => langsung kalah
+    Quiz quiz(0, "Kuis 1 Soal", "uji");
+    quizRepo.save(quiz);
+    Question q(0, quiz.getId(), "Soal tunggal?");
+    qRepo.save(q);
+    Option right(0, q.getId(), "Benar", true);
+    Option wrong(0, q.getId(), "Salah", false);
+    oRepo.save(right);
+    oRepo.save(wrong);
+
+    GameResult r1 = engine.submitAnswers(quiz.getId(), 1, "Uji", {{q.getId(), wrong.getId()}});
+    assert(r1.damagePerWrong == 100);
+    assert(r1.finalHp == 0);
+    assert(r1.isGameOver);
+
+    GameResult r2 = engine.submitAnswers(quiz.getId(), 1, "Uji", {{q.getId(), right.getId()}});
+    assert(r2.finalHp == 100);
+    assert(!r2.isGameOver);
+
+    // Tambah soal kedua => 2 soal => damage 50
+    Question q2(0, quiz.getId(), "Soal kedua?");
+    qRepo.save(q2);
+    Option right2(0, q2.getId(), "Benar", true);
+    Option wrong2(0, q2.getId(), "Salah", false);
+    oRepo.save(right2);
+    oRepo.save(wrong2);
+
+    GameResult r3 = engine.submitAnswers(quiz.getId(), 2, "Uji",
+        {{q.getId(), right.getId()}, {q2.getId(), wrong2.getId()}});
+    assert(r3.damagePerWrong == 50);
+    assert(r3.finalHp == 50);
+
+    quizRepo.remove(quiz.getId());
+    std::cout << " -> PASSED: 1 soal = 100 damage, 2 soal = 50 damage" << std::endl;
+}
+
 int main() {
     std::cout << "==========================================================" << std::endl;
     std::cout << "       SUITE PENGUJIAN OTOMATIS BACKEND C++ QUIZ GAME     " << std::endl;
@@ -155,6 +200,7 @@ int main() {
     testOOPEncapsulationOptionSecurity();
     testRepositoryPatternAndDatabase();
     testGameEngineEvaluation();
+    testDamageDependsOnQuestionCount();
 
     std::cout << "==========================================================" << std::endl;
     std::cout << " [SUCCESS] SEMUA PENGUJIAN UNIT & LOGIKA OOP BERHASIL!    " << std::endl;

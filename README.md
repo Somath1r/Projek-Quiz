@@ -20,7 +20,7 @@ Proyek ini dibangun untuk memenuhi tugas besar mata kuliah **Praktikum Pemrogram
    - Pemain mulai dengan **100 HP** (Health Points) dengan animasi bar darah di atas karakter.
    - Soal ditampilkan satu per satu dengan navigasi Sebelumnya/Berikutnya dan indikator progres.
    - **Anti-Cheat**: Selama bermain, frontend **tidak menerima field `is_correct`**. Seluruh jawaban dinilai secara aman di server C++.
-   - Aturan Darah Polimorfik: Jawaban salah mengurangi HP (Knight: 15 HP, Archer: 20 HP, Mage: 25 HP).
+   - Aturan Darah: Tiap jawaban salah mengurangi HP sebesar **100 ÷ jumlah soal** (dibulatkan ke atas). Contoh: 1 soal = 100 HP (langsung kalah), 4 soal = 25 HP, 5 soal = 20 HP. Berlaku sama untuk semua karakter.
 4. **Animasi Replay Hasil Dramatis**:
    - Replay berurutan per butir soal dengan jeda waktu.
    - Jawaban benar: Karakter melompat/bersorak, muncul teks centang hijau melayang, HP aman.
@@ -65,9 +65,9 @@ Projek Quiz/
 │   │   ├── Question.h / .cpp   # Model Pertanyaan
 │   │   ├── Option.h / .cpp     # Model Pilihan Jawaban (Enkapsulasi anti-cheat)
 │   │   ├── Character.h / .cpp  # Base class karakter (Polimorfisme takeDamage)
-│   │   ├── Knight.h / .cpp     # Subclass Knight (Armor tebal: -15 HP)
-│   │   ├── Archer.h / .cpp     # Subclass Archer (Kelincahan: -20 HP)
-│   │   ├── Mage.h / .cpp       # Subclass Mage (Glass cannon: -25 HP)
+│   │   ├── Knight.h / .cpp     # Subclass Knight (animasi blok perisai)
+│   │   ├── Archer.h / .cpp     # Subclass Archer (animasi terpental)
+│   │   ├── Mage.h / .cpp       # Subclass Mage (animasi penghalang sihir pecah)
 │   │   ├── CharacterFactory.h  # Factory pattern pembuatan smart pointer Character
 │   │   └── GameSession.h       # Model riwayat sesi permainan
 │   ├── repositories/           # Implementasi pola Repository
@@ -200,7 +200,7 @@ Output di terminal akan menampilkan:
 ==========================================================
 [Config] Berhasil memuat konfigurasi dari config.json
 [Config] Database Target: 127.0.0.1:3306 (DB: quiz_game, User: root)
-[Config] Base Damage Salah: 20 HP
+[Config] Damage per soal salah: 100 / jumlah soal (otomatis)
 [Config] Frontend Folder: ./frontend
 [Database] BERHASIL terhubung ke MySQL Server di 127.0.0.1:3306
 ----------------------------------------------------------
@@ -251,7 +251,7 @@ File dokumentasi lengkap beserta **Diagram Kelas (Mermaid)** dan pemetaan konsep
 1. **Class**: Seluruh model data (`Quiz`, `Question`, `Option`, `Character`, `Knight`, `Archer`, `Mage`, `GameSession`), `Database`, dan `GameEngine` dipisahkan rapi dalam file `.h` dan `.cpp`.
 2. **Enkapsulasi**: Nilai `hp_` karakter diproteksi (`protected`) dan hanya dapat dimodifikasi secara terkontrol melalui `heal()` dan `takeDamage()`. Kunci jawaban dienkapsulasi dan disembunyikan lewat `Option::toJson(false)`.
 3. **Pewarisan**: Class abstrak `Entity` diturunkan ke `Quiz`, `Question`, dan `Option`. Class `Character` diturunkan ke `Knight`, `Archer`, dan `Mage`.
-4. **Polimorfisme**: Method `takeDamage(int baseDamage)` dan `getHitAnimation()` bersifat virtual pada class `Character` dan di-override dengan rumus damage serta animasi unik pada `Knight` (15 HP), `Archer` (20 HP), dan `Mage` (25 HP). Instansiasi menggunakan smart pointer `std::unique_ptr<Character>` via `CharacterFactory::create()`.
+4. **Polimorfisme**: Method `getHitAnimation()` dan `getSpecialTrait()` bersifat *pure virtual* pada class `Character` dan di-override oleh `Knight`, `Archer`, dan `Mage` (animasi kena serangan dan trait berbeda). `takeDamage()` juga virtual sehingga subclass dapat meng-override-nya bila perlu. Instansiasi menggunakan smart pointer `std::unique_ptr<Character>` via `CharacterFactory::create()`.
 5. **Abstraksi**: `GameEngine` menyembunyikan detail komputasi evaluasi jawaban dan database dari Handler REST API.
 6. **Interface**: `ISerializable` dan generic template `IRepository<T>` menyediakan kontrak pure virtual function dan virtual destructor.
 

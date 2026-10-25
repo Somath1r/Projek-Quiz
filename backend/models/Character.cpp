@@ -14,6 +14,14 @@ void Character::heal(int amount) {
     }
 }
 
+// ENKAPSULASI: HP hanya berkurang lewat method ini dan tidak pernah di bawah 0
+int Character::takeDamage(int damage) {
+    if (damage <= 0) return 0;
+    int lost = std::min(hp_, damage);
+    hp_ -= lost;
+    return lost;
+}
+
 nlohmann::json Character::toJson() const {
     nlohmann::json j;
     j["id"] = id_;
