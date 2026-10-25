@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   let userAnswers = {}; // Map: questionId -> optionId
   let currentHp = 100;
   let isSubmitting = false;
+  const HURT_HP_THRESHOLD = 50;
 
   // Elemen DOM
   const hudAvatarImg = document.getElementById('hudAvatarImg');
@@ -307,29 +308,56 @@ document.addEventListener('DOMContentLoaded', async () => {
     void floatingIndicator.offsetWidth; // trigger reflow
   }
 
+  // Menampilkan gambar karakter di dalam modal hasil (agar pose menang/kesakitan/KO terlihat)
+  function showResultPose(src, animClass) {
+    if (!src) return;
+    let pose = document.getElementById('resultCharacterPose');
+    if (!pose) {
+      pose = document.createElement('img');
+      pose.id = 'resultCharacterPose';
+      resultBanner.parentNode.insertBefore(pose, resultBanner);
+    }
+    pose.src = src;
+    pose.alt = 'Karakter';
+    pose.className = `result-character-pose ${animClass}`;
+  }
+
   // Tampilkan Modal Review Hasil
   function showFinalResultsModal(result) {
     resultModal.style.display = 'flex';
 
     statFinalScore.textContent = `${result.score} / ${result.max_score}`;
     statFinalHp.textContent = `${result.final_hp} HP`;
+    const isGameOver = result.final_hp <= 0;
+    const isHurtWin = !isGameOver && result.final_hp <= HURT_HP_THRESHOLD;
 
-    if (result.final_hp <= 0) {
+    if (isGameOver) {
       resultBanner.textContent = '💀 GAME OVER! HP HABIS!';
       resultBanner.className = 'result-banner defeat';
       resultSubtitle.textContent = 'Darah karaktermu habis terkena serangan akibat salah menjawab.';
       statGameStatus.textContent = 'KALAH (KO)';
       statGameStatus.style.color = 'var(--neon-red)';
+      showResultPose(character && character.sprite_hit, 'anim-ko-fall');
+    } else if (isHurtWin) {
+      // MENANG TAPI KESAKITAN (HP <= 50)
+      resultBanner.textContent = '😥 HAMPIR MOKAD EUYY....!';
+      resultBanner.className = 'result-banner victory';
+      resultSubtitle.textContent = `Kamu berhasil menang, tapi karaktermu kesakitan. Darah tersisa tinggal ${result.final_hp} HP. Lebih teliti lagi ya!`;
+      statGameStatus.textContent = 'MENANG (TERLUKA)';
+      statGameStatus.style.color = 'var(--neon-yellow)';
+      showResultPose(character && character.sprite_hit, 'anim-hurt-victory');
+      characterSprite.src = character.sprite_hit;
+      characterSprite.className = 'character-sprite anim-hurt-victory';
     } else {
       resultBanner.textContent = '🏆 VICTORY! MISI SELESAI!';
       resultBanner.className = 'result-banner victory';
       resultSubtitle.textContent = 'Hebat! Kamu berhasil bertahan hidup menyelesaikan seluruh rintangan kuis!';
       statGameStatus.textContent = 'MENANG';
       statGameStatus.style.color = 'var(--neon-green)';
+      showResultPose(character && character.sprite_win, 'anim-victory-jump');
       characterSprite.src = character.sprite_win;
       characterSprite.className = 'character-sprite anim-victory-jump';
     }
-
     // Pisahkan soal salah dan benar
     wrongQuestionsList.innerHTML = '';
     correctQuestionsList.innerHTML = '';
