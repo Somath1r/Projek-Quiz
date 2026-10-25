@@ -1,15 +1,14 @@
-# Hasil kompilasi C++
+# Hasil build C++
 build/
+
+# Dependensi frontend
+node_modules/
+
+# File hasil kompilasi
 *.exe
 *.o
 *.obj
 *.dll
-
-# Cache dan file sementara
-.vscode/
-*.log
-.DS_Store
-Thumbs.db
 
 # File rahasia
 .env
